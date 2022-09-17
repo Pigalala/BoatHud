@@ -24,12 +24,6 @@ public class MenuInteg implements ModMenuApi {
 					.setSaveConsumer(newVal -> Config.enabled = newVal)
 					.build())
 
-				.addEntry(entryBuilder.startBooleanToggle(EXTENDED, Config.extended)
-					.setDefaultValue(true)
-					.setTooltip(TIP_EXTENDED)
-					.setSaveConsumer(newVal -> Config.extended = newVal)
-					.build())
-
 				.addEntry(entryBuilder.startEnumSelector(SPEED_FORMAT, SpeedFormat.class, SpeedFormat.values()[Config.configSpeedType])
 					.setDefaultValue(SpeedFormat.KMPH)
 					.setSaveConsumer(newVal -> Config.setUnit(newVal.ordinal()))

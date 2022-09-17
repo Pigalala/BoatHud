@@ -50,8 +50,6 @@ public class Config {
 				do {
 					if(line.startsWith("enabled "))
 						enabled = Boolean.parseBoolean(line.substring(8));
-					if(line.startsWith("extended "))
-						extended = Boolean.parseBoolean(line.substring(9));
 					if(line.startsWith("barType "))
 						barType = Integer.parseInt(line.substring(8));
 					if(line.startsWith("speedUnit "))

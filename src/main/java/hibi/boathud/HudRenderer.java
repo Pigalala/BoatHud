@@ -8,6 +8,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HudRenderer
 extends DrawableHelper {
 
@@ -49,52 +52,43 @@ extends DrawableHelper {
 		// but gives the impression that it's being updated faster than 20 hz (which it isn't)
 		this.displayedSpeed = MathHelper.lerp(tickDelta, this.displayedSpeed, Common.hudData.speed);
 
-		if(Config.extended) {
 			// Overlay texture and bar
-			this.drawTexture(stack, i - 91, this.scaledHeight - 83, 0, 70, 182, 33);
-			this.renderBar(stack, i - 91, this.scaledHeight - 83);
+			this.drawTexture(stack, i - 91, this.scaledHeight - 60, 0, 70, 182, 31);
+			this.renderBar(stack, i - 91, this.scaledHeight - 60);
 
 			// Sprites
 			// Left-right
-			this.drawTexture(stack, i - 86, this.scaledHeight - 65, 61, this.client.options.leftKey.isPressed() ? 38 : 30, 17, 8);
-			this.drawTexture(stack, i - 63, this.scaledHeight - 65, 79, this.client.options.rightKey.isPressed() ? 38 : 30, 17, 8);
-			// Ping
-			this.renderPing(stack, i + 75 - nameLen, this.scaledHeight - 65);
-			// Brake-throttle bar
-			this.drawTexture(stack, i, this.scaledHeight - 55, 0, this.client.options.forwardKey.isPressed() ? 45 : 40, 61, 5);
-			this.drawTexture(stack, i - 61, this.scaledHeight - 55, 0, this.client.options.backKey.isPressed() ? 35 : 30, 61, 5);
-			
-			// Text
-			// First Row
-			this.typeCentered(stack, String.format(Config.speedFormat, this.displayedSpeed * Config.speedRate), i - 58, this.scaledHeight - 76, 0xFFFFFF);
-			this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i, this.scaledHeight - 76, 0xFFFFFF);
-			this.typeCentered(stack, String.format(Config.gFormat, Common.hudData.g), i + 58, this.scaledHeight - 76, 0xFFFFFF);
-			// Second Row
-			this.client.textRenderer.drawWithShadow(stack, Common.hudData.name, i + 88 - nameLen, this.scaledHeight - 65, 0xFFFFFF);
+			this.drawTexture(stack, i + 90, this.scaledHeight - 60, this.client.options.rightKey.isPressed() ? 193 : 183, 0, 4, 26);
+			this.drawTexture(stack, i - 94, this.scaledHeight - 60, this.client.options.leftKey.isPressed() ? 198 : 188, 0, 4, 26);
 
-		} else { // Compact mode
-			// Overlay texture and bar
-			this.drawTexture(stack, i - 91, this.scaledHeight - 61, 0, 50, 182, 20);
-			this.renderBar(stack, i - 91, this.scaledHeight - 61);
+			// Pig
+			this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.forwardKey.isPressed() ? 119 : 96, 30 ,23 ,20);
+			// Brake
+			this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.backKey.isPressed() ? 142 : 165, 30, 22, 20);
 
-			// Sprites
-			// Left-right
-			this.drawTexture(stack, i - 21, this.scaledHeight - 55, 61, this.client.options.leftKey.isPressed() ? 38 : 30, 17, 8);
-			this.drawTexture(stack, i + 3, this.scaledHeight - 55, 79, this.client.options.rightKey.isPressed() ? 38 : 30, 17, 8);
-			// Brake-throttle bar
-			this.drawTexture(stack, i, this.scaledHeight - 45, 0, this.client.options.forwardKey.isPressed() ? 45 : 40, 61, 5);
-			this.drawTexture(stack, i - 61, this.scaledHeight - 45, 0, this.client.options.backKey.isPressed() ? 35 : 30, 61, 5);
+			// Speed sprite
+			this.drawTexture(stack, i - 87, this.scaledHeight - 55, 203, getOvrSpeed(), 7, 9);
 
 			// Speed and drift angle
 			this.typeCentered(stack, String.format(Config.speedFormat, this.displayedSpeed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
 			this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 58, this.scaledHeight - 54, 0xFFFFFF);
-
-
-		}
 		RenderSystem.disableBlend();
 	}
 
-	/** Renders the speed bar atop the HUD, uses displayedSpeed to, well, diisplay the speed. */
+	private Integer getOvrSpeed() {
+		if (Common.hudData.g > 0) {
+			// positive
+			return 0;
+		} else if (Common.hudData.g < 0) {
+			// negative
+			return 9;
+		} else {
+			// no acceleration
+			return 18;
+		}
+	}
+
+	/** Renders the speed bar atop the HUD, uses displayedSpeed to, well, display the speed. */
 	private void renderBar(MatrixStack stack, int x, int y) {
 		this.drawTexture(stack, x, y, 0, BAR_OFF[Config.barType], 182, 5);
 		if(Common.hudData.speed < MIN_V[Config.barType]) return;
