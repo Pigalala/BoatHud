@@ -14,9 +14,3 @@ To configure, you need [Mod Menu](https://github.com/TerraformersMC/ModMenu/).
 
 This mod is available under the Unlicense.
 Feel free to learn from it and incorporate it in your own projects.
-
-## Pig Modification
-
-Extension of BoatHud to be Pigalala themed 🐷
-
-![BoatHud pig modification screenshot](.github/pigscreenshot.png)
