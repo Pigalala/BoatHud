@@ -70,7 +70,7 @@ extends DrawableHelper {
 			this.drawTexture(stack, i - 87, this.scaledHeight - 55, 203, getOvrSpeed(), 7, 9);
 
 			// Speed and drift angle
-			this.typeCentered(stack, String.format(Config.speedFormat, this.displayedSpeed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
+			this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
 			this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 58, this.scaledHeight - 54, 0xFFFFFF);
 		RenderSystem.disableBlend();
 	}
