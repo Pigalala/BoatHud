@@ -37,8 +37,7 @@ public class HudData {
 
 		// a̅•b̅ = |a̅||b̅|cos ϑ
 		// ϑ = acos [(a̅•b̅) / (|a̅||b̅|)]
-		// this.driftAngle = Math.toDegrees(Math.acos(velocity.dotProduct(boat.getRotationVector()) / velocity.length() * boat.getRotationVector().length()));
-		this.driftAngle = Math.acos(velocity.dotProduct(boat.getRotationVector()) / velocity.length() * boat.getRotationVector().length()) * (180 / pi);
+		this.driftAngle = (180 / pi) * Math.acos(velocity.dotProduct(boat.getRotationVector()) / (velocity.length() * boat.getRotationVector().length()));
 		if(Double.isNaN(this.driftAngle)) this.driftAngle = 0; // Div by 0
 
 		// Trivial miscellanea
