@@ -32,12 +32,13 @@ public class HudData {
 		BoatEntity boat = (BoatEntity)Common.client.player.getVehicle();
 		// Ignore vertical speed
 		Vec3d velocity = boat.getVelocity().multiply(1, 0, 1);
+		Vec3d rotVec = boat.getRotationVector().multiply(1, 0, 1);
 		this.oldSpeed = this.speed;
 		this.speed = velocity.length() * 20d; // Speed in Minecraft's engine is in meters/tick.
 
 		// a̅•b̅ = |a̅||b̅|cos ϑ
 		// ϑ = acos [(a̅•b̅) / (|a̅||b̅|)]
-		this.driftAngle = (180 / pi) * Math.acos(velocity.dotProduct(boat.getRotationVector()) / (velocity.length() * boat.getRotationVector().length()));
+		this.driftAngle = (180 / pi) * Math.acos(velocity.dotProduct(rotVec) / (velocity.length() * rotVec.length()));
 		if(Double.isNaN(this.driftAngle)) this.driftAngle = 0; // Div by 0
 
 		// Trivial miscellanea
