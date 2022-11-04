@@ -29,9 +29,6 @@ extends DrawableHelper {
 	private static final int[] BAR_OFF = { 0, 10, 20};
 	private static final int[] BAR_ON =  { 5, 15, 25};
 
-	// Used for lerping
-	private double displayedSpeed = 0.0d;
-
 	public HudRenderer(MinecraftClient client) {
 		this.client = client;
 	}
@@ -40,18 +37,13 @@ extends DrawableHelper {
 		this.scaledWidth = this.client.getWindow().getScaledWidth();
 		this.scaledHeight = this.client.getWindow().getScaledHeight();
 		int i = this.scaledWidth / 2;
-		int nameLen = this.client.textRenderer.getWidth(Common.hudData.name);
 
 		// Render boilerplate
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-
-		// Lerping the displayed speed with the actual speed against how far we are into the tick not only is mostly accurate,
-		// but gives the impression that it's being updated faster than 20 hz (which it isn't)
-		this.displayedSpeed = MathHelper.lerp(tickDelta, this.displayedSpeed, Common.hudData.speed);
-
+		
 			// Overlay texture and bar
 			this.drawTexture(stack, i - 91, this.scaledHeight - 60, 0, 70, 182, 31);
 			this.renderBar(stack, i - 91, this.scaledHeight - 60);
@@ -97,7 +89,7 @@ extends DrawableHelper {
 			this.drawTexture(stack, x, y, 0, BAR_ON[Config.barType], 182, 5);
 			return;
 		}
-		this.drawTexture(stack, x, y, 0, BAR_ON[Config.barType], (int)((this.displayedSpeed - MIN_V[Config.barType]) * SCALE_V[Config.barType]), 5);
+		this.drawTexture(stack, x, y, 0, BAR_ON[Config.barType], (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]), 5);
 	}
 
 	/** Implementation is cloned from the notchian ping display in the tab player list.	 */
