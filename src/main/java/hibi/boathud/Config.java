@@ -21,7 +21,7 @@ public class Config {
 	/** Controls whether or not the HUD should be displayed. */
 	public static boolean enabled = true;
 	/** Controls whether or not to show all the available details on the HUD. */
-	public static boolean extended = true;
+	public static boolean extras = false;
 
 	/** Conversion rate between speed unit and m/s. Should not be modified directly, use setUnit(). */
 	public static double speedRate = 3.6d;
@@ -50,6 +50,8 @@ public class Config {
 				do {
 					if(line.startsWith("enabled "))
 						enabled = Boolean.parseBoolean(line.substring(8));
+					if(line.startsWith("extras "))
+						extras = Boolean.parseBoolean(line.substring(7));
 					if(line.startsWith("barType "))
 						barType = Integer.parseInt(line.substring(8));
 					if(line.startsWith("speedUnit "))
@@ -74,7 +76,7 @@ public class Config {
 		try {
 			FileWriter writer = new FileWriter(file);
 			writer.write("enabled " + Boolean.toString(enabled) + "\n");
-			writer.write("extended " + Boolean.toString(extended) + "\n");
+			writer.write("extras " + Boolean.toString(extras) + "\n");
 			writer.write("barType " + Integer.toString(barType) + "\n");
 			writer.write("speedUnit " + Integer.toString(configSpeedType) + "\n");
 			writer.close();

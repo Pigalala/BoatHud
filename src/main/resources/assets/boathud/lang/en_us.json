@@ -3,7 +3,7 @@
 	"modmenu.summaryTranslation.boathud": "Sailing fast in style!",
 	"boathud.config.title": "BoatHud Options",
 	"boathud.option.enabled": "Enabled",
-	"boathud.option.extended": "Extended HUD",
+	"boathud.option.extras": "HUD Extras",
 	"boathud.option.speed_format": "Speed units",
 	"boathud.option.speed_format.MS": "m/s",
 	"boathud.option.speed_format.KMPH": "km/h",

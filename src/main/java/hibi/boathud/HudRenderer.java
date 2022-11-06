@@ -6,10 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HudRenderer
 extends DrawableHelper {
@@ -33,7 +29,7 @@ extends DrawableHelper {
 		this.client = client;
 	}
 
-	public void render(MatrixStack stack, float tickDelta) {
+	public void render(MatrixStack stack) {
 		this.scaledWidth = this.client.getWindow().getScaledWidth();
 		this.scaledHeight = this.client.getWindow().getScaledHeight();
 		int i = this.scaledWidth / 2;
@@ -43,28 +39,48 @@ extends DrawableHelper {
 		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		
-			// Overlay texture and bar
-			this.drawTexture(stack, i - 91, this.scaledHeight - 60, 0, 70, 182, 31);
-			this.renderBar(stack, i - 91, this.scaledHeight - 60);
 
-			// Sprites
-			// Left-right
-			this.drawTexture(stack, i + 90, this.scaledHeight - 60, this.client.options.rightKey.isPressed() ? 193 : 183, 0, 4, 26);
-			this.drawTexture(stack, i - 94, this.scaledHeight - 60, this.client.options.leftKey.isPressed() ? 198 : 188, 0, 4, 26);
+		// Render methods
+		renderBase(stack, i);
+		if(Config.extras) renderExtras(stack, i);
+		renderText(stack, i);
 
-			// Pig
-			this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.forwardKey.isPressed() ? 119 : 96, 30 ,23 ,20);
-			// Brake
-			this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.backKey.isPressed() ? 142 : 165, 30, 22, 20);
-
-			// Speed sprite
-			this.drawTexture(stack, i - 87, this.scaledHeight - 55, 203, getOvrSpeed(), 7, 9);
-
-			// Speed and drift angle
-			this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
-			this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 58, this.scaledHeight - 54, 0xFFFFFF);
 		RenderSystem.disableBlend();
+	}
+
+	private void renderBase(MatrixStack stack, int i) {
+		// Overlay texture and bar
+		this.drawTexture(stack, i - 91, this.scaledHeight - 60, 0, 70, 182, 31);
+		this.renderBar(stack, i - 91, this.scaledHeight - 60);
+
+		// Sprites
+		// Left-right
+		this.drawTexture(stack, i + 90, this.scaledHeight - 60, this.client.options.rightKey.isPressed() ? 193 : 183, 0, 4, 26);
+		this.drawTexture(stack, i - 94, this.scaledHeight - 60, this.client.options.leftKey.isPressed() ? 198 : 188, 0, 4, 26);
+
+		// Pig
+		this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.forwardKey.isPressed() ? 119 : 96, 30 ,23 ,20);
+		// Brake
+		this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.backKey.isPressed() ? 142 : 165, 30, 22, 20);
+
+		// Speed sprite
+		this.drawTexture(stack, i - 87, this.scaledHeight - 55, 203, getOvrSpeed(), 7, 9);
+	}
+
+	private void renderExtras(MatrixStack stack, int i) {
+		// Ping
+		renderPing(stack, i - 87, this.scaledHeight - 44);
+	}
+
+	private void renderText(MatrixStack stack, int i) {
+		// Speed and drift angle
+		this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
+		this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 58, this.scaledHeight - 54, 0xFFFFFF);
+
+		if(!Config.extras) return;
+
+		// Ping
+		typeCentered(stack, Common.hudData.ping + "ms", i - 60, this.scaledHeight - 44, getPingColour());
 	}
 
 	private Integer getOvrSpeed() {
@@ -77,6 +93,15 @@ extends DrawableHelper {
 		} else {
 			// no acceleration
 			return 18;
+		}
+	}
+
+	private int getPingColour() {
+		if(Common.hudData.ping < 1000) {
+			return 0xFFFFFF;
+		}
+		else {
+			return 0xFF0000;
 		}
 	}
 

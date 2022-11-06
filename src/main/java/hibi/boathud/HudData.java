@@ -12,7 +12,7 @@ public class HudData {
 	/** The current drift angle in degrees, the angle difference between the velocity and where the boat is facing. */
 	public double driftAngle;
 
-	/** The curerent ping of the player, just for bookkeeping. */
+	/** The curerent ping of the player */
 	public int ping;
 	/** The name of the player. This is incompatible with mods that change which account you're logged in as. */
 	public final String name;

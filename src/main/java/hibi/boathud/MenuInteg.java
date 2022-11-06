@@ -24,6 +24,11 @@ public class MenuInteg implements ModMenuApi {
 					.setSaveConsumer(newVal -> Config.enabled = newVal)
 					.build())
 
+				.addEntry(entryBuilder.startBooleanToggle(EXTRAS, Config.extras)
+					.setDefaultValue(false)
+					.setSaveConsumer(newVal -> Config.extras = newVal)
+					.build())
+
 				.addEntry(entryBuilder.startEnumSelector(SPEED_FORMAT, SpeedFormat.class, SpeedFormat.values()[Config.configSpeedType])
 					.setDefaultValue(SpeedFormat.KMPH)
 					.setSaveConsumer(newVal -> Config.setUnit(newVal.ordinal()))
@@ -53,7 +58,7 @@ public class MenuInteg implements ModMenuApi {
 		TITLE = Text.translatable("boathud.config.title"),
 		CAT = Text.translatable("boathud.config.cat"),
 		ENABLED = Text.translatable("boathud.option.enabled"),
-		EXTENDED = Text.translatable("boathud.option.extended"),
+		EXTRAS = Text.translatable("boathud.option.extras"),
 		BAR_TYPE = Text.translatable("boathud.option.bar_type"),
 		SPEED_FORMAT = Text.translatable("boathud.option.speed_format"),
 		TIP_EXTENDED = Text.translatable("boathud.tooltip.extended"),
