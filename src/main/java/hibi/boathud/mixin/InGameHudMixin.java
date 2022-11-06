@@ -22,4 +22,13 @@ public class InGameHudMixin {
 			Common.hudRenderer.render(stack);
 		}
 	}
+
+	@Inject(
+			method = "renderStatusBars",
+			at = @At("HEAD"),
+			cancellable = true)
+	private void renderStatusBars(MatrixStack matrices, CallbackInfo ci) {
+		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
+		ci.cancel();
+	}
 }
