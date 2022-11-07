@@ -40,15 +40,6 @@ extends DrawableHelper {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		// Render methods
-		renderBase(stack, i);
-		if(Config.extras) renderExtras(stack, i);
-		renderText(stack, i);
-
-		RenderSystem.disableBlend();
-	}
-
-	private void renderBase(MatrixStack stack, int i) {
 		// Overlay texture and bar
 		this.drawTexture(stack, i - 91, this.scaledHeight - 60, 0, 70, 182, 31);
 		this.renderBar(stack, i - 91, this.scaledHeight - 60);
@@ -65,22 +56,18 @@ extends DrawableHelper {
 
 		// Speed sprite
 		this.drawTexture(stack, i - 87, this.scaledHeight - 55, 203, getOvrSpeed(), 7, 9);
-	}
 
-	private void renderExtras(MatrixStack stack, int i) {
 		// Ping
 		renderPing(stack, i - 87, this.scaledHeight - 44);
-	}
 
-	private void renderText(MatrixStack stack, int i) {
 		// Speed and drift angle
 		this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
 		this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 58, this.scaledHeight - 54, 0xFFFFFF);
 
-		if(!Config.extras) return;
+		this.typeCentered(stack, getPingColour() + Common.hudData.ping + "§fms", i - 60, this.scaledHeight - 44, 0xFFFFFF); // Ping
+		this.typeCentered(stack, getFPSColour() + Common.hudData.fps + " §fFPS", i + 58, this.scaledHeight - 44, 0xFFFFFF); // FPS
 
-		// Ping
-		typeCentered(stack, Common.hudData.ping + "ms", i - 60, this.scaledHeight - 44, getPingColour());
+		RenderSystem.disableBlend();
 	}
 
 	private Integer getOvrSpeed() {
@@ -96,12 +83,22 @@ extends DrawableHelper {
 		}
 	}
 
-	private int getPingColour() {
+	private String getPingColour() {
 		if(Common.hudData.ping < 1000) {
-			return 0xFFFFFF;
+			return "§f";
 		}
 		else {
-			return 0xFF0000;
+			return "§c";
+		}
+	}
+
+	private String getFPSColour() {
+		if(Common.hudData.fps < this.client.options.getMaxFps().getValue() * 0.25) {
+			return "§c";
+		} else if(Common.hudData.fps >= this.client.options.getMaxFps().getValue() * 0.95) {
+			return "§a";
+		} else {
+			return "§f";
 		}
 	}
 
