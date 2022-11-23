@@ -31,4 +31,14 @@ public class InGameHudMixin {
 		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
 		ci.cancel();
 	}
+
+	@Inject(
+			method = "renderExperienceBar",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	private void renderExperienceBar(MatrixStack matrices, int x, CallbackInfo ci) {
+		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
+		ci.cancel();
+	}
 }
