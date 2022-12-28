@@ -1,19 +1,16 @@
 package hibi.boathud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class HudRenderer
-extends DrawableHelper {
+public class HudRenderer extends DrawableHelper {
 
 	private static final Identifier WIDGETS_TEXTURE = new Identifier("boathud","textures/widgets.png");
-	private final MinecraftClient client;
-	private int scaledWidth;
-	private int scaledHeight;
+	private static final HudRenderer INSTANCE = new HudRenderer();
+	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
 	// The index to be used in these scales is the bar type (stored internally as an integer, defined in Config)
 	//                                       Pack  Mix Blue
@@ -25,47 +22,46 @@ extends DrawableHelper {
 	private static final int[] BAR_OFF = { 0, 10, 20};
 	private static final int[] BAR_ON =  { 5, 15, 25};
 
-	public HudRenderer(MinecraftClient client) {
-		this.client = client;
+	public static HudRenderer get() {
+		return INSTANCE;
 	}
 
 	public void render(MatrixStack stack) {
-		this.scaledWidth = this.client.getWindow().getScaledWidth();
-		this.scaledHeight = this.client.getWindow().getScaledHeight();
-		int i = this.scaledWidth / 2;
+		int scaledWidth = CLIENT.getWindow().getScaledWidth();
+		int scaledHeight = CLIENT.getWindow().getScaledHeight();
+		int i = scaledWidth / 2;
+		int yOff = Config.yOffset + 6;
 
-		// Render boilerplate
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
 		// Overlay texture and bar
-		this.drawTexture(stack, i - 91, this.scaledHeight - 60, 0, 70, 182, 31);
-		this.renderBar(stack, i - 91, this.scaledHeight - 60);
+		this.drawTexture(stack, i - 91, scaledHeight - yOff - 20, 0, 70, 182, 31);
+		this.renderBar(stack, i - 91, scaledHeight - yOff - 20);
 
 		// Sprites
 		// Left-right
-		this.drawTexture(stack, i + 90, this.scaledHeight - 60, this.client.options.rightKey.isPressed() ? 193 : 183, 0, 4, 26);
-		this.drawTexture(stack, i - 94, this.scaledHeight - 60, this.client.options.leftKey.isPressed() ? 198 : 188, 0, 4, 26);
+		this.drawTexture(stack, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 193 : 183, 0, 4, 26);
+		this.drawTexture(stack, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 198 : 188, 0, 4, 26);
 
 		// Pig
-		this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.forwardKey.isPressed() ? 119 : 96, 30 ,23 ,20);
+		this.drawTexture(stack, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 119 : 96, 30 ,23 ,20);
 		// Brake
-		this.drawTexture(stack, i - 11, this.scaledHeight - 55, this.client.options.backKey.isPressed() ? 142 : 165, 30, 22, 20);
+		this.drawTexture(stack, i - 11, scaledHeight - yOff - 15, CLIENT.options.backKey.isPressed() ? 142 : 165, 30, 22, 20);
 
 		// Speed sprite
-		this.drawTexture(stack, i - 87, this.scaledHeight - 55, 203, getOvrSpeed(), 7, 9);
+		this.drawTexture(stack, i - 87, scaledHeight - yOff - 15, 203, getOvrSpeed(), 7, 9);
 
 		// Ping
-		renderPing(stack, i - 87, this.scaledHeight - 44);
+		renderPing(stack, i - 87, scaledHeight - yOff - 4);
 
-		// Speed and drift angle
-		this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, this.scaledHeight - 54, 0xFFFFFF);
-		this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 58, this.scaledHeight - 54, 0xFFFFFF);
-
-		this.typeCentered(stack, getPingColour() + Common.hudData.ping + "§fms", i - 60, this.scaledHeight - 44, 0xFFFFFF); // Ping
-		this.typeCentered(stack, getFPSColour() + Common.hudData.fps + " §fFPS", i + 58, this.scaledHeight - 44, 0xFFFFFF); // FPS
+		// Text
+		this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, scaledHeight - yOff - 14); // Speed
+		this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 62, scaledHeight - yOff - 14); // Angle
+		this.typeCentered(stack, getPingColour() + String.format("%03.0f§fms", (float) Common.hudData.ping), i - 60, scaledHeight - yOff - 4); // Ping
+		this.typeCentered(stack, getFPSColour() + String.format("%03.0f §fFPS", (float) Common.hudData.fps), i + 62, scaledHeight - yOff - 4); // FPS
 
 		RenderSystem.disableBlend();
 	}
@@ -93,9 +89,9 @@ extends DrawableHelper {
 	}
 
 	private String getFPSColour() {
-		if(Common.hudData.fps < this.client.options.getMaxFps().getValue() * 0.25) {
+		if(Common.hudData.fps < CLIENT.options.getMaxFps().getValue() * 0.25) {
 			return "§c";
-		} else if(Common.hudData.fps >= this.client.options.getMaxFps().getValue() * 0.95) {
+		} else if(Common.hudData.fps >= CLIENT.options.getMaxFps().getValue() * 0.95) {
 			return "§a";
 		} else {
 			return "§f";
@@ -107,7 +103,7 @@ extends DrawableHelper {
 		this.drawTexture(stack, x, y, 0, BAR_OFF[Config.barType], 182, 5);
 		if(Common.hudData.speed < MIN_V[Config.barType]) return;
 		if(Common.hudData.speed > MAX_V[Config.barType]) {
-			if(this.client.world.getTime() % 2 == 0) return;
+			if(CLIENT.world.getTime() % 2 == 0) return;
 			this.drawTexture(stack, x, y, 0, BAR_ON[Config.barType], 182, 5);
 			return;
 		}
@@ -138,8 +134,7 @@ extends DrawableHelper {
 		this.drawTexture(stack, x, y, 246, offset, 10, 8);
 	}
 
-	/** Renders a piece of text centered horizontally on an X coordinate. */
-	private void typeCentered(MatrixStack stack, String text, int centerX, int y, int color) {
-		this.client.textRenderer.drawWithShadow(stack, text, centerX - this.client.textRenderer.getWidth(text) / 2, y, color);
+	public void typeCentered(MatrixStack stack, String text, int centerX, int y) {
+		MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, text, centerX - MinecraftClient.getInstance().textRenderer.getWidth(text) / 2f, y, 0xFFFFFF);
 	}
 }

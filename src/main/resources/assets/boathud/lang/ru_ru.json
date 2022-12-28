@@ -17,5 +17,7 @@
 	"boathud.tooltip.bar_type": "Изменяет оформление и поведение панели скорости:",
 	"boathud.tooltip.bar_type.packed": "Вода и плотный лёд: хорош для низких скоростей.",
 	"boathud.tooltip.bar_type.mixed": "Смешанный: хорошо подходит для любого вида льда.",
-	"boathud.tooltip.bar_type.blue": "Синий лёд: больше подходит для гонок на синем льду."
+	"boathud.tooltip.bar_type.blue": "Синий лёд: больше подходит для гонок на синем льду.",
+	"boathud.option.y_offset": "",
+	"boathud.tooltip.y_offset": ""
 }

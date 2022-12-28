@@ -18,10 +18,10 @@ public class Config {
 	/** Format string for the acceleration display on the HUD. */
 	public static final String gFormat = "%+.1f g";
 
+	public static int yOffset = 36;
+
 	/** Controls whether or not the HUD should be displayed. */
 	public static boolean enabled = true;
-	/** Controls whether or not to show all the available details on the HUD. */
-	public static boolean extras = false;
 
 	/** Conversion rate between speed unit and m/s. Should not be modified directly, use setUnit(). */
 	public static double speedRate = 3.6d;
@@ -35,7 +35,7 @@ public class Config {
 	/** Setting a value that's not between 0 and 2 *will* cause an IndexOutOfBounds */
 	public static int barType = 0;
 
-	private static File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "boathud.properties");
+	private static File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "boathud.properties");
 
 	private Config() {}
 
@@ -44,14 +44,14 @@ public class Config {
 	 */
 	public static void load() {
 		try {
-			if(file.exists()) {
-				BufferedReader br = new BufferedReader(new FileReader(file));
+			if(configFile.exists()) {
+				BufferedReader br = new BufferedReader(new FileReader(configFile));
 				String line = br.readLine();
 				do {
 					if(line.startsWith("enabled "))
 						enabled = Boolean.parseBoolean(line.substring(8));
-					if(line.startsWith("extras "))
-						extras = Boolean.parseBoolean(line.substring(7));
+					if(line.startsWith("yoffset "))
+						yOffset = Integer.parseInt(line.substring(8));
 					if(line.startsWith("barType "))
 						barType = Integer.parseInt(line.substring(8));
 					if(line.startsWith("speedUnit "))
@@ -74,9 +74,9 @@ public class Config {
 	 */
 	public static void save() {
 		try {
-			FileWriter writer = new FileWriter(file);
+			FileWriter writer = new FileWriter(configFile);
 			writer.write("enabled " + Boolean.toString(enabled) + "\n");
-			writer.write("extras " + Boolean.toString(extras) + "\n");
+			writer.write("yoffset " + Integer.toString(yOffset) + "\n");
 			writer.write("barType " + Integer.toString(barType) + "\n");
 			writer.write("speedUnit " + Integer.toString(configSpeedType) + "\n");
 			writer.close();
