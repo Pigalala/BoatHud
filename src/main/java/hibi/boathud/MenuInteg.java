@@ -24,11 +24,11 @@ public class MenuInteg implements ModMenuApi {
 					.setSaveConsumer(newVal -> Config.enabled = newVal)
 					.build())
 
-				.addEntry(entryBuilder.startBooleanToggle(EXTENDED, Config.extended)
-					.setDefaultValue(true)
-					.setTooltip(TIP_EXTENDED)
-					.setSaveConsumer(newVal -> Config.extended = newVal)
-					.build())
+				.addEntry(entryBuilder.startIntSlider(Y_OFFSET, Config.yOffset, 0, 300)
+						.setDefaultValue(36)
+						.setSaveConsumer(newVal -> Config.yOffset = newVal)
+						.setTooltip(Y_OFFSET_TOOLTIP)
+						.build())
 
 				.addEntry(entryBuilder.startEnumSelector(SPEED_FORMAT, SpeedFormat.class, SpeedFormat.values()[Config.configSpeedType])
 					.setDefaultValue(SpeedFormat.KMPH)
@@ -59,12 +59,13 @@ public class MenuInteg implements ModMenuApi {
 		TITLE = Text.translatable("boathud.config.title"),
 		CAT = Text.translatable("boathud.config.cat"),
 		ENABLED = Text.translatable("boathud.option.enabled"),
-		EXTENDED = Text.translatable("boathud.option.extended"),
 		BAR_TYPE = Text.translatable("boathud.option.bar_type"),
 		SPEED_FORMAT = Text.translatable("boathud.option.speed_format"),
 		TIP_EXTENDED = Text.translatable("boathud.tooltip.extended"),
 		TIP_BAR = Text.translatable("boathud.tooltip.bar_type"),
 		TIP_BAR_PACKED = Text.translatable("boathud.tooltip.bar_type.packed"),
 		TIP_BAR_MIXED = Text.translatable("boathud.tooltip.bar_type.mixed"),
-		TIP_BAR_BLUE = Text.translatable("boathud.tooltip.bar_type.blue");
+		TIP_BAR_BLUE = Text.translatable("boathud.tooltip.bar_type.blue"),
+		Y_OFFSET = Text.translatable("boathud.option.y_offset"),
+		Y_OFFSET_TOOLTIP = Text.translatable("boathud.tooltip.y_offset");
 }
