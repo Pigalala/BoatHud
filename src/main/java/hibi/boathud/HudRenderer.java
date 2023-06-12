@@ -2,11 +2,11 @@ package hibi.boathud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
-public class HudRenderer extends DrawableHelper {
+public class HudRenderer {
 
 	private static final Identifier WIDGETS_TEXTURE = new Identifier("boathud","textures/widgets.png");
 	private static final HudRenderer INSTANCE = new HudRenderer();
@@ -26,7 +26,7 @@ public class HudRenderer extends DrawableHelper {
 		return INSTANCE;
 	}
 
-	public void render(MatrixStack stack) {
+	public void render(DrawContext context) {
 		int scaledWidth = CLIENT.getWindow().getScaledWidth();
 		int scaledHeight = CLIENT.getWindow().getScaledHeight();
 		int i = scaledWidth / 2;
@@ -38,30 +38,33 @@ public class HudRenderer extends DrawableHelper {
 		RenderSystem.defaultBlendFunc();
 
 		// Overlay texture and bar
-		this.drawTexture(stack, i - 91, scaledHeight - yOff - 20, 0, 70, 182, 31);
-		this.renderBar(stack, i - 91, scaledHeight - yOff - 20);
+		context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledHeight - yOff - 20, 0, 30, 182, 26);
+		this.renderBar(context, i - 91, scaledHeight - yOff - 20);
 
 		// Sprites
 		// Left-right
-		this.drawTexture(stack, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 193 : 183, 0, 4, 26);
-		this.drawTexture(stack, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 198 : 188, 0, 4, 26);
+		context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 200 : 192, 0, 4, 26);
+		context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 204 : 196, 0, 4, 26);
 
 		// Pig
-		this.drawTexture(stack, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 119 : 96, 30 ,23 ,20);
+		context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 22 : 0, 56 ,22 ,20);
 		// Brake
-		this.drawTexture(stack, i - 11, scaledHeight - yOff - 15, CLIENT.options.backKey.isPressed() ? 142 : 165, 30, 22, 20);
+		if(CLIENT.options.backKey.isPressed()) context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 44, 56, 22, 20);
 
 		// Speed sprite
-		this.drawTexture(stack, i - 87, scaledHeight - yOff - 15, 203, getOvrSpeed(), 7, 9);
+		int offsetSpeedIcon = -87;
+		if(Config.configSpeedType == 1) offsetSpeedIcon = -89;
+		else if(Config.configSpeedType == 3) offsetSpeedIcon = -82;
+		context.drawTexture(WIDGETS_TEXTURE, i + offsetSpeedIcon, scaledHeight - yOff - 15, 208, getOvrSpeed(), 7, 9);
 
 		// Ping
-		renderPing(stack, i - 87, scaledHeight - yOff - 4);
+		renderPing(context, i - 87, scaledHeight - yOff - 4);
 
 		// Text
-		this.typeCentered(stack, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, scaledHeight - yOff - 14); // Speed
-		this.typeCentered(stack, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 62, scaledHeight - yOff - 14); // Angle
-		this.typeCentered(stack, getPingColour() + String.format("%03.0f§fms", (float) Common.hudData.ping), i - 60, scaledHeight - yOff - 4); // Ping
-		this.typeCentered(stack, getFPSColour() + String.format("%03.0f §fFPS", (float) Common.hudData.fps), i + 62, scaledHeight - yOff - 4); // FPS
+		this.typeCentered(context, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, scaledHeight - yOff - 14); // Speed
+		this.typeCentered(context, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 62, scaledHeight - yOff - 14); // Angle
+		this.typeCentered(context, String.format("§f%03.0fms", (float) Common.hudData.ping), i - 60, scaledHeight - yOff - 4); // Ping
+		this.typeCentered(context, String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 62, scaledHeight - yOff - 4); // FPS
 
 		RenderSystem.disableBlend();
 	}
@@ -79,62 +82,44 @@ public class HudRenderer extends DrawableHelper {
 		}
 	}
 
-	private String getPingColour() {
-		if(Common.hudData.ping < 1000) {
-			return "§f";
-		}
-		else {
-			return "§c";
-		}
-	}
-
-	private String getFPSColour() {
-		if(Common.hudData.fps < CLIENT.options.getMaxFps().getValue() * 0.25) {
-			return "§c";
-		} else if(Common.hudData.fps >= CLIENT.options.getMaxFps().getValue() * 0.95) {
-			return "§a";
-		} else {
-			return "§f";
-		}
-	}
-
 	/** Renders the speed bar atop the HUD, uses displayedSpeed to, well, display the speed. */
-	private void renderBar(MatrixStack stack, int x, int y) {
-		this.drawTexture(stack, x, y, 0, BAR_OFF[Config.barType], 182, 5);
+	private void renderBar(DrawContext context, int x, int y) {
+		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_OFF[Config.barType], 182, 5);
 		if(Common.hudData.speed < MIN_V[Config.barType]) return;
 		if(Common.hudData.speed > MAX_V[Config.barType]) {
 			if(CLIENT.world.getTime() % 2 == 0) return;
-			this.drawTexture(stack, x, y, 0, BAR_ON[Config.barType], 182, 5);
+			context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], 182, 5);
 			return;
 		}
-		this.drawTexture(stack, x, y, 0, BAR_ON[Config.barType], (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]), 5);
+		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]), 5);
 	}
 
 	/** Implementation is cloned from the notchian ping display in the tab player list.	 */
-	private void renderPing(MatrixStack stack, int x, int y) {
-		int offset = 0;
+	private void renderPing(DrawContext context, int x, int y) {
+		int y2;
 		if(Common.hudData.ping < 0) {
-			offset = 40;
+			y2 = 35;
 		}
 		else if(Common.hudData.ping < 150) {
-			offset = 0;
+			y2 = 0;
 		}
 		else if(Common.hudData.ping < 300) {
-			offset = 8;
+			y2 = 7;
 		}
 		else if(Common.hudData.ping < 600) {
-			offset = 16;
+			y2 = 14;
 		}
 		else if(Common.hudData.ping < 1000) {
-			offset = 24;
+			y2 = 21;
 		}
 		else {
-			offset = 32;
+			y2 = 28;
 		}
-		this.drawTexture(stack, x, y, 246, offset, 10, 8);
+		context.drawTexture(WIDGETS_TEXTURE, x, y, 182, y2, 10, 7);
 	}
 
-	public void typeCentered(MatrixStack stack, String text, int centerX, int y) {
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, text, centerX - MinecraftClient.getInstance().textRenderer.getWidth(text) / 2f, y, 0xFFFFFF);
+	public void typeCentered(DrawContext context, String text, int centerX, int y) {
+		TextRenderer tr = MinecraftClient.getInstance().textRenderer;
+		context.drawTextWithShadow(tr, text, Math.round(centerX - tr.getWidth(text) / 2f), y, 0xFFFFFF);
 	}
 }

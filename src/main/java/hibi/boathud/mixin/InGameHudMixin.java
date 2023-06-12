@@ -1,6 +1,7 @@
 package hibi.boathud.mixin;
 
 import hibi.boathud.HudRenderer;
+import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -10,7 +11,6 @@ import hibi.boathud.Common;
 import hibi.boathud.Config;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
@@ -18,9 +18,9 @@ public abstract class InGameHudMixin {
 		method = "render",
 		at = @At("TAIL")
 	)
-	private void render(MatrixStack stack, float tickDelta, CallbackInfo info) {
+	private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
 		if(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen)) {
-			HudRenderer.get().render(stack);
+			HudRenderer.get().render(context);
 		}
 	}
 
@@ -28,7 +28,7 @@ public abstract class InGameHudMixin {
 			method = "renderStatusBars",
 			at = @At("HEAD"),
 			cancellable = true)
-	private void renderStatusBars(MatrixStack matrices, CallbackInfo ci) {
+	private void renderStatusBars(DrawContext context, CallbackInfo ci) {
 		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
 		ci.cancel();
 	}
@@ -38,7 +38,7 @@ public abstract class InGameHudMixin {
 			at = @At("HEAD"),
 			cancellable = true
 	)
-	private void renderExperienceBar(MatrixStack matrices, int x, CallbackInfo ci) {
+	private void renderExperienceBar(DrawContext context, int x, CallbackInfo ci) {
 		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
 		ci.cancel();
 	}
@@ -48,7 +48,7 @@ public abstract class InGameHudMixin {
 			at = @At("HEAD"),
 			cancellable = true
 	)
-	private void renderHotbar(float tickDelta, MatrixStack matrices, CallbackInfo ci) {
+	private void renderHotbar(float tickDelta, DrawContext context, CallbackInfo ci) {
 		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
 		ci.cancel();
 	}
