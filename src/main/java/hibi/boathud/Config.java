@@ -19,6 +19,7 @@ public class Config {
 	public static final String gFormat = "%+.1f g";
 
 	public static int yOffset = 36;
+	public static boolean experimentalHud = false;
 
 	/** Controls whether or not the HUD should be displayed. */
 	public static boolean enabled = true;
@@ -56,6 +57,8 @@ public class Config {
 						barType = Integer.parseInt(line.substring(8));
 					if(line.startsWith("speedUnit "))
 						setUnit(Integer.parseInt(line.substring(10)));
+					if(line.startsWith("expHud "))
+						experimentalHud = (Boolean.parseBoolean(line.substring(7)));
 					line = br.readLine();
 				} while (line != null);
 				br.close();
@@ -75,10 +78,11 @@ public class Config {
 	public static void save() {
 		try {
 			FileWriter writer = new FileWriter(configFile);
-			writer.write("enabled " + Boolean.toString(enabled) + "\n");
-			writer.write("yoffset " + Integer.toString(yOffset) + "\n");
-			writer.write("barType " + Integer.toString(barType) + "\n");
-			writer.write("speedUnit " + Integer.toString(configSpeedType) + "\n");
+			writer.write("enabled " + enabled + "\n");
+			writer.write("yoffset " + yOffset + "\n");
+			writer.write("barType " + barType + "\n");
+			writer.write("speedUnit " + configSpeedType + "\n");
+			writer.write("expHud " + experimentalHud + "\n");
 			writer.close();
 		}
 		catch (Exception e) {

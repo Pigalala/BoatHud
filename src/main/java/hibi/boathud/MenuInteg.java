@@ -24,6 +24,11 @@ public class MenuInteg implements ModMenuApi {
 					.setSaveConsumer(newVal -> Config.enabled = newVal)
 					.build())
 
+				.addEntry(entryBuilder.startBooleanToggle(EXPERIMENTAL, Config.experimentalHud)
+						.setDefaultValue(false)
+						.setSaveConsumer(newVal -> Config.experimentalHud = newVal)
+						.build())
+
 				.addEntry(entryBuilder.startIntSlider(Y_OFFSET, Config.yOffset, 0, 300)
 						.setDefaultValue(36)
 						.setSaveConsumer(newVal -> Config.yOffset = newVal)
@@ -59,6 +64,7 @@ public class MenuInteg implements ModMenuApi {
 		TITLE = Text.translatable("boathud.config.title"),
 		CAT = Text.translatable("boathud.config.cat"),
 		ENABLED = Text.translatable("boathud.option.enabled"),
+		EXPERIMENTAL = Text.translatable("boathud.option.experimental"),
 		BAR_TYPE = Text.translatable("boathud.option.bar_type"),
 		SPEED_FORMAT = Text.translatable("boathud.option.speed_format"),
 		TIP_EXTENDED = Text.translatable("boathud.tooltip.extended"),

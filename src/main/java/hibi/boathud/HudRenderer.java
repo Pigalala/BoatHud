@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class HudRenderer {
@@ -30,7 +31,7 @@ public class HudRenderer {
 		int scaledWidth = CLIENT.getWindow().getScaledWidth();
 		int scaledHeight = CLIENT.getWindow().getScaledHeight();
 		int i = scaledWidth / 2;
-		int yOff = Config.yOffset + 6;
+		int yOff = Config.yOffset + 6; // yes
 
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
@@ -39,59 +40,69 @@ public class HudRenderer {
 
 		// Overlay texture and bar
 		context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledHeight - yOff - 20, 0, 30, 182, 26);
-		this.renderBar(context, i - 91, scaledHeight - yOff - 20);
+		int currentBarX = this.renderBar(context, i - 91, scaledHeight - yOff - 20);
 
-		// Sprites
-		// Left-right
-		context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 200 : 192, 0, 4, 26);
-		context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 204 : 196, 0, 4, 26);
+		if(Common.hudData.isDriver) {
+			// Sprites
+			// Left-right
+			context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 200 : 192, 0, 4, 26);
+			context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 204 : 196, 0, 4, 26);
 
-		// Pig
-		context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 22 : 0, 56 ,22 ,20);
-		// Brake
-		if(CLIENT.options.backKey.isPressed()) context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 44, 56, 22, 20);
-
-		// Speed sprite
-		int offsetSpeedIcon = -87;
-		if(Config.configSpeedType == 1) offsetSpeedIcon = -89;
-		else if(Config.configSpeedType == 3) offsetSpeedIcon = -82;
-		context.drawTexture(WIDGETS_TEXTURE, i + offsetSpeedIcon, scaledHeight - yOff - 15, 208, getOvrSpeed(), 7, 9);
-
+			// Pig
+			context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 22 : 0, 56 ,22 ,20);
+			// Brake
+			if(CLIENT.options.backKey.isPressed()) context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 44, 56, 22, 20);
+		} else {
+			context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 22, 56 ,22 ,20);
+		}
 		// Ping
-		renderPing(context, i - 87, scaledHeight - yOff - 4);
+		renderPing(context, i - 77, scaledHeight - yOff - 4);
+
 
 		// Text
-		this.typeCentered(context, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 58, scaledHeight - yOff - 14); // Speed
-		this.typeCentered(context, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 62, scaledHeight - yOff - 14); // Angle
-		this.typeCentered(context, String.format("§f%03.0fms", (float) Common.hudData.ping), i - 60, scaledHeight - yOff - 4); // Ping
-		this.typeCentered(context, String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 62, scaledHeight - yOff - 4); // FPS
+		if(Common.hudData.isDriver) {
+			if (Config.experimentalHud) {
+				this.typeCentered(context, String.format(Config.gFormat, (float) Common.hudData.g), i - 52, scaledHeight - yOff - 14); // G
+				this.renderSpeedText(context, currentBarX, scaledHeight - yOff - 28);
+			}
+			else this.typeCentered(context, getOvrSpeedIcon() + String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 52, scaledHeight - yOff - 14);
+			this.typeCentered(context, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 52, scaledHeight - yOff - 14); // Angle
+		}
+		this.typeCentered(context, String.format("§f%03.0fms", (float) Common.hudData.ping), i - 50, scaledHeight - yOff - 4); // Ping
+		this.typeCentered(context, String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 52, scaledHeight - yOff - 4); // FPS
 
 		RenderSystem.disableBlend();
 	}
 
-	private Integer getOvrSpeed() {
-		if (Common.hudData.g > 0) {
+	private String getOvrSpeedIcon() {
+		if (Common.hudData.g > .1d) {
 			// positive
-			return 0;
-		} else if (Common.hudData.g < 0) {
+			return "§a↑§f ";
+		} else if (Common.hudData.g < -.1d) {
 			// negative
-			return 9;
+			return "§c↓§f ";
 		} else {
 			// no acceleration
-			return 18;
+			return "§7-§f ";
 		}
 	}
 
 	/** Renders the speed bar atop the HUD, uses displayedSpeed to, well, display the speed. */
-	private void renderBar(DrawContext context, int x, int y) {
+	private int renderBar(DrawContext context, int x, int y) {
 		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_OFF[Config.barType], 182, 5);
-		if(Common.hudData.speed < MIN_V[Config.barType]) return;
+		if(Common.hudData.speed < MIN_V[Config.barType]) return x;
 		if(Common.hudData.speed > MAX_V[Config.barType]) {
-			if(CLIENT.world.getTime() % 2 == 0) return;
+			if(CLIENT.world.getTime() % 2 == 0) return x + 182;
 			context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], 182, 5);
-			return;
+			return x + 182;
 		}
 		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]), 5);
+		return x + (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]);
+	}
+
+	private void renderSpeedText(DrawContext context, int x, int y) {
+		this.typeCentered(context, String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), x, y - 8);
+		this.typeCentered(context, "↓", x, y);
 	}
 
 	/** Implementation is cloned from the notchian ping display in the tab player list.	 */
@@ -119,7 +130,6 @@ public class HudRenderer {
 	}
 
 	public void typeCentered(DrawContext context, String text, int centerX, int y) {
-		TextRenderer tr = MinecraftClient.getInstance().textRenderer;
-		context.drawTextWithShadow(tr, text, Math.round(centerX - tr.getWidth(text) / 2f), y, 0xFFFFFF);
+		context.drawText(MinecraftClient.getInstance().textRenderer, text, Math.round(centerX - MinecraftClient.getInstance().textRenderer.getWidth(text) / 2f), y, -1, true);
 	}
 }
