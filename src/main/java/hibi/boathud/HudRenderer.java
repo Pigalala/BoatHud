@@ -39,24 +39,31 @@ public class HudRenderer {
 		RenderSystem.defaultBlendFunc();
 
 		// Overlay texture and bar
-		context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledHeight - yOff - 20, 0, 30, 182, 26);
+		if(!Config.smallHud) context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledHeight - yOff - 20, 0, 30, 182, 26);
+		else context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledHeight - yOff - 20, 0, 76, 182, 16);
 		int currentBarX = this.renderBar(context, i - 91, scaledHeight - yOff - 20);
 
 		if(Common.hudData.isDriver) {
-			// Sprites
-			// Left-right
-			context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 200 : 192, 0, 4, 26);
-			context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 204 : 196, 0, 4, 26);
-
-			// Pig
-			context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 22 : 0, 56 ,22 ,20);
-			// Brake
-			if(CLIENT.options.backKey.isPressed()) context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 44, 56, 22, 20);
-		} else {
+			if(!Config.smallHud) {
+				// Sprites
+				// Left-right
+				context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 200 : 192, 0, 4, 26);
+				context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 204 : 196, 0, 4, 26);
+				// Pig
+				context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, CLIENT.options.forwardKey.isPressed() ? 22 : 0, 56 ,22 ,20);
+				// Brake
+				if(CLIENT.options.backKey.isPressed()) context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 44, 56, 22, 20);
+			} else {
+				// Sprites
+				// Left-right
+				context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledHeight - yOff - 20, CLIENT.options.rightKey.isPressed() ? 216 : 208, 0, 4, 16);
+				context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledHeight - yOff - 20, CLIENT.options.leftKey.isPressed() ? 220 : 212, 0, 4, 16);
+			}
+		} else if(Config.smallHud) {
 			context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledHeight - yOff - 15, 22, 56 ,22 ,20);
 		}
 		// Ping
-		renderPing(context, i - 77, scaledHeight - yOff - 4);
+		if(!Config.smallHud) renderPing(context, i - 77, scaledHeight - yOff - 4);
 
 
 		// Text
@@ -68,8 +75,10 @@ public class HudRenderer {
 			else this.typeCentered(context, getOvrSpeedIcon() + String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 52, scaledHeight - yOff - 14);
 			this.typeCentered(context, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 52, scaledHeight - yOff - 14); // Angle
 		}
-		this.typeCentered(context, String.format("§f%03.0fms", (float) Common.hudData.ping), i - 50, scaledHeight - yOff - 4); // Ping
-		this.typeCentered(context, String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 52, scaledHeight - yOff - 4); // FPS
+		if(!Config.smallHud) {
+			this.typeCentered(context, String.format("§f%03.0fms", (float) Common.hudData.ping), i - 50, scaledHeight - yOff - 4); // Ping
+			this.typeCentered(context, String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 52, scaledHeight - yOff - 4); // FPS
+		}
 
 		RenderSystem.disableBlend();
 	}

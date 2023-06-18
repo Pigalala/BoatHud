@@ -20,6 +20,7 @@ public class Config {
 
 	public static int yOffset = 36;
 	public static boolean experimentalHud = false;
+	public static boolean smallHud = false;
 
 	/** Controls whether or not the HUD should be displayed. */
 	public static boolean enabled = true;
@@ -58,7 +59,9 @@ public class Config {
 					if(line.startsWith("speedUnit "))
 						setUnit(Integer.parseInt(line.substring(10)));
 					if(line.startsWith("expHud "))
-						experimentalHud = (Boolean.parseBoolean(line.substring(7)));
+						experimentalHud = Boolean.parseBoolean(line.substring(7));
+					if(line.startsWith("smallHud "))
+						smallHud = Boolean.parseBoolean(line.substring(9));
 					line = br.readLine();
 				} while (line != null);
 				br.close();
@@ -83,6 +86,7 @@ public class Config {
 			writer.write("barType " + barType + "\n");
 			writer.write("speedUnit " + configSpeedType + "\n");
 			writer.write("expHud " + experimentalHud + "\n");
+			writer.write("smallHud " + smallHud + "\n");
 			writer.close();
 		}
 		catch (Exception e) {
