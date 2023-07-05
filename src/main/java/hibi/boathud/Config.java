@@ -8,9 +8,7 @@ import java.io.FileWriter;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Config {
-	
-	/** Format string for speed display on the HUD. Should not be modified directly, use setUnit(). */
-	public static String speedFormat = "%03.0f km/h";
+	public static SpeedUnits speedUnit = SpeedUnits.METERS_PER_SECOND;
 
 	/** Format string for the drift angle display on the HUD. */
 	public static final  String angleFormat = "%03.0f °";
@@ -22,13 +20,8 @@ public class Config {
 	public static boolean experimentalHud = false;
 	public static boolean smallHud = false;
 
-	/** Controls whether or not the HUD should be displayed. */
+	/** Controls whether the HUD should be displayed. */
 	public static boolean enabled = true;
-
-	/** Conversion rate between speed unit and m/s. Should not be modified directly, use setUnit(). */
-	public static double speedRate = 3.6d;
-	/** Speed unit, used for tracking. Should not be modified directly, use setUnit(). */
-	public static int configSpeedType = 1;
 
 	// The speed bar type is one of three values:
 	// 0: (Pack) Water and Packed Ice speeds (0 ~ 40 m/s)
@@ -57,7 +50,7 @@ public class Config {
 					if(line.startsWith("barType "))
 						barType = Integer.parseInt(line.substring(8));
 					if(line.startsWith("speedUnit "))
-						setUnit(Integer.parseInt(line.substring(10)));
+						speedUnit = SpeedUnits.idOf(Integer.parseInt(line.substring(10)));
 					if(line.startsWith("expHud "))
 						experimentalHud = Boolean.parseBoolean(line.substring(7));
 					if(line.startsWith("smallHud "))
@@ -84,42 +77,12 @@ public class Config {
 			writer.write("enabled " + enabled + "\n");
 			writer.write("yoffset " + yOffset + "\n");
 			writer.write("barType " + barType + "\n");
-			writer.write("speedUnit " + configSpeedType + "\n");
+			writer.write("speedUnit " + speedUnit.ordinal() + "\n");
 			writer.write("expHud " + experimentalHud + "\n");
 			writer.write("smallHud " + smallHud + "\n");
 			writer.close();
 		}
 		catch (Exception e) {
-		}
-	}
-
-	/**
-	 * Sets the speed unit.
-	 * @param type 0 for m/s, 1 for km/h (default), 2 for mph, 3 for knots.
-	 */
-	public static void setUnit(int type) {
-		switch(type) {
-		case 0:
-			Config.speedRate = 1d;
-			Config.speedFormat = "%03.0f m/s";
-			Config.configSpeedType = 0;
-			break;
-		case 2:
-			Config.speedRate = 2.236936d;
-			Config.speedFormat = "%03.0f mph";
-			Config.configSpeedType = 2;
-			break;
-		case 3:
-			Config.speedRate = 1.943844d;
-			Config.speedFormat = "%03.0f kt";
-			Config.configSpeedType = 3;
-			break;
-		case 1:
-			default:
-			Config.speedRate = 3.6d;
-			Config.speedFormat = "%03.0f km/h";
-			Config.configSpeedType = 1;
-			break;
 		}
 	}
 }

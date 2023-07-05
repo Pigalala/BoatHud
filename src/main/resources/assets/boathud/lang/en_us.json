@@ -5,10 +5,6 @@
 	"boathud.option.enabled": "Enabled",
 	"boathud.option.extras": "HUD Extras",
 	"boathud.option.speed_format": "Speed units",
-	"boathud.option.speed_format.MS": "m/s",
-	"boathud.option.speed_format.KMPH": "km/h",
-	"boathud.option.speed_format.MPH": "mph",
-	"boathud.option.speed_format.KT": "kt",
 	"boathud.option.bar_type": "Speed bar type",
 	"boathud.option.bar_type.PACKED": "Water & Packed Ice",
 	"boathud.option.bar_type.MIXED": "Mixed ices",
@@ -22,6 +18,7 @@
 	"boathud.category.keybinds": "BoatHud",
 	"boathud.option.y_offset": "Y Offset",
 	"boathud.option.experimental": "Experimental HUD",
+	"boathud.option.altunits": "Alternate Speed Units",
 	"boathud.option.smallhud": "Small HUD",
 	"boathud.tooltip.y_offset": "Change y offset from the bottom of the screen"
 }

@@ -40,10 +40,10 @@ public class MenuInteg implements ModMenuApi {
 						.setTooltip(Y_OFFSET_TOOLTIP)
 						.build())
 
-				.addEntry(entryBuilder.startEnumSelector(SPEED_FORMAT, SpeedFormat.class, SpeedFormat.values()[Config.configSpeedType])
-					.setDefaultValue(SpeedFormat.KMPH)
-					.setSaveConsumer(newVal -> Config.setUnit(newVal.ordinal()))
-					.setEnumNameProvider(value -> Text.translatable("boathud.option.speed_format." + value.toString()))
+				.addEntry(entryBuilder.startEnumSelector(SPEED_FORMAT, SpeedUnits.class, SpeedUnits.currentlySelected())
+					.setDefaultValue(SpeedUnits.METERS_PER_SECOND)
+					.setSaveConsumer(newVal -> Config.speedUnit = newVal)
+					.setEnumNameProvider(value -> Text.of(SpeedUnits.idOf(value.ordinal()).displayName()))
 					.build())
 
 				.addEntry(entryBuilder.startEnumSelector(BAR_TYPE, BarType.class, BarType.values()[Config.barType])
@@ -61,9 +61,6 @@ public class MenuInteg implements ModMenuApi {
 	public enum BarType {
 		PACKED, MIXED, BLUE
 	}
-	public enum SpeedFormat {
-		MS, KMPH, MPH, KT
-	}
 
 	private static final MutableText
 		TITLE = Text.translatable("boathud.config.title"),
@@ -73,7 +70,6 @@ public class MenuInteg implements ModMenuApi {
 		EXPERIMENTAL = Text.translatable("boathud.option.experimental"),
 		BAR_TYPE = Text.translatable("boathud.option.bar_type"),
 		SPEED_FORMAT = Text.translatable("boathud.option.speed_format"),
-		TIP_EXTENDED = Text.translatable("boathud.tooltip.extended"),
 		TIP_BAR = Text.translatable("boathud.tooltip.bar_type"),
 		TIP_BAR_PACKED = Text.translatable("boathud.tooltip.bar_type.packed"),
 		TIP_BAR_MIXED = Text.translatable("boathud.tooltip.bar_type.mixed"),

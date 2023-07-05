@@ -4,8 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HudRenderer {
 
@@ -22,6 +24,8 @@ public class HudRenderer {
 	//                                    Pk Mix Blu
 	private static final int[] BAR_OFF = { 0, 10, 20};
 	private static final int[] BAR_ON =  { 5, 15, 25};
+
+	private static final List<QueuedText> queuedTexts = new ArrayList<>();
 
 	public static HudRenderer get() {
 		return INSTANCE;
@@ -60,27 +64,31 @@ public class HudRenderer {
 				context.drawTexture(WIDGETS_TEXTURE, i + 90, scaledY - 20, CLIENT.options.rightKey.isPressed() ? 216 : 208, 0, 4, 16);
 				context.drawTexture(WIDGETS_TEXTURE, i - 94, scaledY - 20, CLIENT.options.leftKey.isPressed() ? 220 : 212, 0, 4, 16);
 			}
-		} else if(Config.smallHud) {
+		} else if(!Config.smallHud) {
 			context.drawTexture(WIDGETS_TEXTURE, i - 11, scaledY - 15, 22, 56 ,22 ,20);
 		}
-		// Ping
-		if(!Config.smallHud) renderPing(context, i - 77, scaledY - 4);
 
+		// Ping
+		if(!Config.smallHud) {
+			renderPing(context, i - 77, scaledY - 4);
+			queuedTexts.add(new QueuedText(String.format("§f%03.0fms", (float) Common.hudData.ping), i - 50, scaledY - 4));
+		}
 
 		// Text
 		if(Common.hudData.isDriver) {
 			if (Config.experimentalHud) {
-				this.typeCentered(context, String.format(Config.gFormat, (float) Common.hudData.g), i - 52, scaledY - 14); // G
+				queuedTexts.add(new QueuedText(String.format(Config.gFormat, (float) Common.hudData.g), i - 52, scaledY - 14)); // G text
 				this.renderSpeedText(context, currentBarX, scaledY - 28);
 			}
-			else this.typeCentered(context, getOvrSpeedIcon() + String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate), i - 52, scaledY - 14);
-			this.typeCentered(context, String.format(Config.angleFormat, Common.hudData.driftAngle), i + 52, scaledY - 14); // Angle
+			else queuedTexts.add(new QueuedText(getOvrSpeedIcon() + String.format(SpeedUnits.currentlySelected().speedFormat(), Common.hudData.speed * SpeedUnits.currentlySelected().speedRate()), i - 52, scaledY - 14));
+			queuedTexts.add(new QueuedText(String.format(Config.angleFormat, Common.hudData.driftAngle), i + 52, scaledY - 14)); // Angle
 		}
 		if(!Config.smallHud) {
-			this.typeCentered(context, String.format("§f%03.0fms", (float) Common.hudData.ping), i - 50, scaledY - 4); // Ping
-			this.typeCentered(context, String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 52, scaledY - 4); // FPS
+			queuedTexts.add(new QueuedText(String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 52, scaledY - 4)); // FPS
 		}
 
+		for(QueuedText queuedText : queuedTexts) queuedText.typeCentred(context);
+		queuedTexts.clear();
 		RenderSystem.disableBlend();
 	}
 
@@ -106,14 +114,14 @@ public class HudRenderer {
 			context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], 182, 5);
 			return x + 182;
 		}
-		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]), 5);
-		return x + (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType]);
+		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_ON[Config.barType], (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType] + 1.5), 5);
+		return x + (int)((Common.hudData.speed - MIN_V[Config.barType]) * SCALE_V[Config.barType] + 1.5);
 	}
 
 	private void renderSpeedText(DrawContext context, int x, int y) {
 		TextRenderer tr = MinecraftClient.getInstance().textRenderer;
 
-		String text = String.format(Config.speedFormat, Common.hudData.speed * Config.speedRate);
+		String text = String.format(SpeedUnits.currentlySelected().speedFormat(), Common.hudData.speed * SpeedUnits.currentlySelected().speedRate());
 		int textWidth = tr.getWidth(text);
 
 		// round(centreX - textWidth / 2f)
@@ -124,7 +132,7 @@ public class HudRenderer {
 		}
 		context.drawText(tr, text, Math.round(x - textWidth / 2f), y - 8, -1, true);
 
-		this.typeCentered(context, "↓", (Common.hudData.g < -.01d) ? x + tr.getWidth("← ") : x, y);
+		queuedTexts.add(new QueuedText("↓", (Common.hudData.g < -.01d) ? x + tr.getWidth("← ") : x, y));
 	}
 
 	/** Implementation is cloned from the notchian ping display in the tab player list.	 */
@@ -149,9 +157,5 @@ public class HudRenderer {
 			y2 = 28;
 		}
 		context.drawTexture(WIDGETS_TEXTURE, x, y, 182, y2, 10, 7);
-	}
-
-	public void typeCentered(DrawContext context, String text, int centerX, int y) {
-		context.drawText(MinecraftClient.getInstance().textRenderer, text, Math.round(centerX - MinecraftClient.getInstance().textRenderer.getWidth(text) / 2f), y, -1, true);
 	}
 }
