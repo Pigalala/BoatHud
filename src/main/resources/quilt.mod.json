@@ -20,7 +20,7 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
       "client": "hibi.boathud.Common",
-      "modmenu": "hibi.boathud.MenuInteg"
+      "modmenu": "hibi.boathud.config.MenuInteg"
     },
     "depends": [
       {

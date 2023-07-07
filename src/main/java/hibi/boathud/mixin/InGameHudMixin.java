@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import hibi.boathud.Common;
-import hibi.boathud.Config;
+import hibi.boathud.config.Config;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.ChatScreen;
 
@@ -53,7 +53,8 @@ public abstract class InGameHudMixin {
 			cancellable = true
 	)
 	private void renderHotbar(float tickDelta, DrawContext context, CallbackInfo ci) {
-		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
+		if(!(Config.enabled && Common.ridingBoat)) return;
+		if(Config.showHotbar || Common.client.currentScreen instanceof ChatScreen) return;
 		ci.cancel();
 	}
 }

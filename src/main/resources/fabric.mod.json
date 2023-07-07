@@ -22,7 +22,7 @@
             "hibi.boathud.Common"
         ],
         "modmenu": [
-            "hibi.boathud.MenuInteg"
+          "hibi.boathud.config.MenuInteg"
         ]
     },
     "mixins": [

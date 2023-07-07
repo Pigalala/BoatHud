@@ -1,5 +1,6 @@
 package hibi.boathud;
 
+import hibi.boathud.config.Config;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;

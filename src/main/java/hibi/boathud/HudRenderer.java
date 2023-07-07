@@ -1,6 +1,8 @@
 package hibi.boathud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import hibi.boathud.config.Config;
+import hibi.boathud.config.SpeedUnits;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -46,7 +48,8 @@ public class HudRenderer {
 		// Overlay texture and bar
 		if(!Config.smallHud) context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledY - 20, 0, 30, 182, 26);
 		else context.drawTexture(WIDGETS_TEXTURE, i - 91, scaledY - 20, 0, 76, 182, 16);
-		int currentBarX = this.renderBar(context, i - 91, scaledY - 20);
+		int currentBarX = -1;
+		if(Common.hudData.isDriver) currentBarX = this.renderBar(context, i - 91, scaledY - 20);
 
 		if(Common.hudData.isDriver) {
 			if(!Config.smallHud) {
@@ -89,14 +92,15 @@ public class HudRenderer {
 
 		for(QueuedText queuedText : queuedTexts) queuedText.typeCentred(context);
 		queuedTexts.clear();
+
 		RenderSystem.disableBlend();
 	}
 
 	private String getOvrSpeedIcon() {
-		if (Common.hudData.g > .01d) {
+		if (Common.hudData.g > .001d) {
 			// positive
 			return "§a↑§f ";
-		} else if (Common.hudData.g < -.01d) {
+		} else if (Common.hudData.g < -.001d) {
 			// negative
 			return "§c↓§f ";
 		} else {
@@ -107,6 +111,7 @@ public class HudRenderer {
 
 	/** Renders the speed bar atop the HUD, uses displayedSpeed to, well, display the speed. */
 	private int renderBar(DrawContext context, int x, int y) {
+		if(!Common.hudData.isDriver) return -1;
 		context.drawTexture(WIDGETS_TEXTURE, x, y, 0, BAR_OFF[Config.barType], 182, 5);
 		if(Common.hudData.speed < MIN_V[Config.barType]) return x;
 		if(Common.hudData.speed > MAX_V[Config.barType]) {

@@ -1,4 +1,4 @@
-package hibi.boathud;
+package hibi.boathud.config;
 
 public enum SpeedUnits {
     METERS_PER_SECOND("m/s", "%03.0f m/s", 1d),
@@ -6,8 +6,9 @@ public enum SpeedUnits {
     MILES_PER_HOUR("mph", "%03.0f mph", 2.236936d),
     KNOTS("kt", "%03.0f kt", 1.943844d),
     FEET_PER_SECOND("ft/s", "%03.0f ft/s", 3.28084d),
-    MACH("Ma", "%01.6f Ma", 0.0030303d),
-    C("C", "%01.12f C", 0.000000003336d);
+    MACH("Ma", "%01.3f Ma", 0.0030303d),
+    C("C", "%01.3f×10⁻⁶ c", 0.003336d),
+    METERS_PER_SECOND_ALT("ms⁻¹", "%03.0f ms⁻¹", 1d);
 
     private final String displayName;
     private final String format;

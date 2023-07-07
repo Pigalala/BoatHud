@@ -1,4 +1,4 @@
-package hibi.boathud;
+package hibi.boathud.config;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public class Config {
 	public static SpeedUnits speedUnit = SpeedUnits.METERS_PER_SECOND;
+	public static boolean showHotbar = true;
 
 	/** Format string for the drift angle display on the HUD. */
 	public static final  String angleFormat = "%03.0f °";
@@ -55,6 +56,8 @@ public class Config {
 						experimentalHud = Boolean.parseBoolean(line.substring(7));
 					if(line.startsWith("smallHud "))
 						smallHud = Boolean.parseBoolean(line.substring(9));
+					if(line.startsWith("showHotbar "))
+						showHotbar = Boolean.parseBoolean(line.substring(11));
 					line = br.readLine();
 				} while (line != null);
 				br.close();
@@ -80,6 +83,7 @@ public class Config {
 			writer.write("speedUnit " + speedUnit.ordinal() + "\n");
 			writer.write("expHud " + experimentalHud + "\n");
 			writer.write("smallHud " + smallHud + "\n");
+			writer.write("showHotbar " + showHotbar + "\n");
 			writer.close();
 		}
 		catch (Exception e) {

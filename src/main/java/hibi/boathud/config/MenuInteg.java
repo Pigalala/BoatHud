@@ -1,4 +1,4 @@
-package hibi.boathud;
+package hibi.boathud.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
@@ -51,7 +51,12 @@ public class MenuInteg implements ModMenuApi {
 					.setTooltip(TIP_BAR, TIP_BAR_PACKED, TIP_BAR_MIXED, TIP_BAR_BLUE)
 					.setSaveConsumer(newVal -> Config.barType = newVal.ordinal())
 					.setEnumNameProvider(value -> Text.translatable("boathud.option.bar_type." + value.toString()))
-					.build());
+					.build())
+
+				.addEntry(entryBuilder.startBooleanToggle(SHOW_HOTBAR, Config.showHotbar)
+						.setDefaultValue(true)
+						.setSaveConsumer(newVal -> Config.showHotbar = newVal)
+						.build());
 
 			builder.setSavingRunnable(() -> Config.save());
 			return builder.build();
@@ -75,5 +80,6 @@ public class MenuInteg implements ModMenuApi {
 		TIP_BAR_MIXED = Text.translatable("boathud.tooltip.bar_type.mixed"),
 		TIP_BAR_BLUE = Text.translatable("boathud.tooltip.bar_type.blue"),
 		Y_OFFSET = Text.translatable("boathud.option.y_offset"),
-		Y_OFFSET_TOOLTIP = Text.translatable("boathud.tooltip.y_offset");
+		Y_OFFSET_TOOLTIP = Text.translatable("boathud.tooltip.y_offset"),
+		SHOW_HOTBAR = Text.translatable("boathud.option.show_hotbar");
 }
