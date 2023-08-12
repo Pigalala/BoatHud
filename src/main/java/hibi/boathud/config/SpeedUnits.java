@@ -7,8 +7,7 @@ public enum SpeedUnits {
     KNOTS("kt", "%03.0f kt", 1.943844d),
     FEET_PER_SECOND("ft/s", "%03.0f ft/s", 3.28084d),
     MACH("Ma", "%01.3f Ma", 0.0030303d),
-    C("C", "%01.3f×10⁻⁶ c", 0.003336d),
-    METERS_PER_SECOND_ALT("ms⁻¹", "%03.0f ms⁻¹", 1d);
+    C("C", "%01.3f×10⁻⁶ C", 0.003336d);
 
     private final String displayName;
     private final String format;
