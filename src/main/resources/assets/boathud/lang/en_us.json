@@ -5,6 +5,7 @@
 	"boathud.option.enabled": "Enabled",
 	"boathud.option.extras": "HUD Extras",
 	"boathud.option.speed_format": "Speed units",
+	"boathud.option.distance_format": "Distance units",
 	"boathud.option.bar_type": "Speed bar type",
 	"boathud.option.bar_type.PACKED": "Water & Packed Ice",
 	"boathud.option.bar_type.MIXED": "Mixed ices",

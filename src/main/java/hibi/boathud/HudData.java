@@ -17,6 +17,8 @@ public class HudData {
 	/** The current fps of the player */
 	public int fps;
 
+	public double distanceTraveled;
+
 	/** The name of the player. This is incompatible with mods that change which account you're logged in as. */
 	public final String name;
 
@@ -43,6 +45,7 @@ public class HudData {
 		this.oldSpeed = this.speed;
 		this.speed = velocity.length() * 20d; // Speed in Minecraft's engine is in meters/tick.
 
+		distanceTraveled += velocity.length();
 		// a̅•b̅ = |a̅||b̅|cos ϑ
 		// ϑ = acos [(a̅•b̅) / (|a̅||b̅|)]
 		this.driftAngle = radToDegsConversion * (Math.acos(velocity.dotProduct(rotVec) / (velocity.length() * rotVec.length())));

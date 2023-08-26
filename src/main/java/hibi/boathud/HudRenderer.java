@@ -80,7 +80,7 @@ public class HudRenderer {
 		// Text
 		if(Common.hudData.isDriver) {
 			if (Config.experimentalHud) {
-				queuedTexts.add(new QueuedText(String.format(Config.gFormat, (float) Common.hudData.g), i - 52, scaledY - 14)); // G text
+				queuedTexts.add(new QueuedText(String.format(Config.distanceUnit.format(), Common.hudData.distanceTraveled * Config.distanceUnit.rate()), i - 52, scaledY - 14)); // G text
 				this.renderSpeedText(context, currentBarX, scaledY - 28);
 			}
 			else queuedTexts.add(new QueuedText(getOvrSpeedIcon() + String.format(SpeedUnits.currentlySelected().speedFormat(), Common.hudData.speed * SpeedUnits.currentlySelected().speedRate()), i - 52, scaledY - 14));

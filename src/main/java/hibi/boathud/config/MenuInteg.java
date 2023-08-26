@@ -46,6 +46,12 @@ public class MenuInteg implements ModMenuApi {
 					.setEnumNameProvider(value -> Text.of(SpeedUnits.idOf(value.ordinal()).displayName()))
 					.build())
 
+				.addEntry(entryBuilder.startEnumSelector(DISTANCE_FORMAT, DistanceUnits.class, DistanceUnits.currentlySelected())
+						.setDefaultValue(DistanceUnits.METERS)
+						.setSaveConsumer(newVal -> Config.distanceUnit = newVal)
+						.setEnumNameProvider(value -> Text.of(DistanceUnits.idOf(value.ordinal()).displayName()))
+						.build())
+
 				.addEntry(entryBuilder.startEnumSelector(BAR_TYPE, BarType.class, BarType.values()[Config.barType])
 					.setDefaultValue(BarType.PACKED)
 					.setTooltip(TIP_BAR, TIP_BAR_PACKED, TIP_BAR_MIXED, TIP_BAR_BLUE)
@@ -75,6 +81,7 @@ public class MenuInteg implements ModMenuApi {
 		EXPERIMENTAL = Text.translatable("boathud.option.experimental"),
 		BAR_TYPE = Text.translatable("boathud.option.bar_type"),
 		SPEED_FORMAT = Text.translatable("boathud.option.speed_format"),
+		DISTANCE_FORMAT = Text.translatable("boathud.option.distance_format"),
 		TIP_BAR = Text.translatable("boathud.tooltip.bar_type"),
 		TIP_BAR_PACKED = Text.translatable("boathud.tooltip.bar_type.packed"),
 		TIP_BAR_MIXED = Text.translatable("boathud.tooltip.bar_type.mixed"),
