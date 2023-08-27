@@ -1,10 +1,10 @@
 package hibi.boathud.config;
 
 public enum DistanceUnits {
-    METERS("Meters (m)", "%07.1f m", 1d),
+    METERS("Meters (m)", "%05.0f m", 1d),
     KILOMETERS("Kilometers (km)", "%06.3f km", 0.001d),
-    MILES("Miles (mi)", "%07.4f mi", 0.000621371d),
-    NAUTICAL_MILES("Nautical Miles (nmi)", "%07.4f nmi", 0.000539957d);
+    MILES("Miles (mi)", "%06.3f mi", 0.000621371d),
+    NAUTICAL_MILES("Nautical Miles (nmi)", "%06.3f nmi", 0.000539957d);
 
     private final String displayName, format;
     private final double rate;
