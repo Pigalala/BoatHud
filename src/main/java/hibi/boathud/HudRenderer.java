@@ -74,7 +74,7 @@ public class HudRenderer {
 		// Ping
 		if(!Config.smallHud) {
 			renderPing(context, i - 77, scaledY - 4);
-			queuedTexts.add(new QueuedText(String.format("§f%03.0fms", (float) Common.hudData.ping), i - 50, scaledY - 4));
+			queuedTexts.add(new QueuedText(String.format("§f%02.0fms", (float) Common.hudData.ping), i - 50, scaledY - 4));
 		}
 
 		// Text
@@ -87,7 +87,7 @@ public class HudRenderer {
 			queuedTexts.add(new QueuedText(String.format(Config.angleFormat, Common.hudData.driftAngle), i + 52, scaledY - 14)); // Angle
 		}
 		if(!Config.smallHud) {
-			queuedTexts.add(new QueuedText(String.format("§f%03.0f FPS", (float) Common.hudData.fps), i + 52, scaledY - 4)); // FPS
+			queuedTexts.add(new QueuedText(String.format("§f%02.0f FPS", (float) Common.hudData.fps), i + 52, scaledY - 4)); // FPS
 		}
 
 		for(QueuedText queuedText : queuedTexts) queuedText.typeCentred(context);

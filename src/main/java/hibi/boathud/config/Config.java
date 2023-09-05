@@ -13,7 +13,7 @@ public class Config {
 	public static boolean showHotbar = true;
 
 	/** Format string for the drift angle display on the HUD. */
-	public static final  String angleFormat = "%03.0f °";
+	public static final  String angleFormat = "%02.0f °";
 
 	/** Format string for the acceleration display on the HUD. */
 	public static final String gFormat = "%+.1f g";
