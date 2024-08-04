@@ -14,6 +14,8 @@ public class MinecraftClientMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void getCurrentFPS(boolean tick, CallbackInfo ci) {
-        if(tick && Common.ridingBoat) Common.hudData.fps = currentFps;
+        if (tick && Common.ridingBoat) {
+            Common.hudData.fps = currentFps;
+        }
     }
 }

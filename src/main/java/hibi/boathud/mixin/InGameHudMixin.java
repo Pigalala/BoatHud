@@ -1,8 +1,14 @@
 package hibi.boathud.mixin;
 
 import hibi.boathud.HudRenderer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.LayeredDrawer;
+import net.minecraft.client.render.RenderTickCounter;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,19 +19,22 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.ChatScreen;
 
 @Mixin(InGameHud.class)
-public abstract class InGameHudMixin {
-	@Inject(
-		method = "render",
-		at = @At(
-				value = "INVOKE",
-				target = "net/minecraft/client/MinecraftClient.getProfiler()Lnet/minecraft/util/profiler/Profiler;",
-				ordinal = 8
-		)
+public class InGameHudMixin {
+
+	@Final
+	@Shadow
+    private LayeredDrawer layeredDrawer;
+
+    @Inject(
+			method = "<init>",
+			at = @At(value = "TAIL")
 	)
-	private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
-		if(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen)) {
-			HudRenderer.get().render(context);
-		}
+	private void init(MinecraftClient client, CallbackInfo ci) {
+		layeredDrawer.addLayer((ctx, tickCounter) -> {
+			if (Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen)) {
+				HudRenderer.get().render(ctx);
+			}
+		});
 	}
 
 	@Inject(
@@ -33,8 +42,9 @@ public abstract class InGameHudMixin {
 			at = @At("HEAD"),
 			cancellable = true)
 	private void renderStatusBars(DrawContext context, CallbackInfo ci) {
-		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
-		ci.cancel();
+		if (Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen)) {
+			ci.cancel();
+		}
 	}
 
 	@Inject(
@@ -43,8 +53,9 @@ public abstract class InGameHudMixin {
 			cancellable = true
 	)
 	private void renderExperienceBar(DrawContext context, int x, CallbackInfo ci) {
-		if(!(Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen))) return;
-		ci.cancel();
+		if (Config.enabled && Common.ridingBoat && !(Common.client.currentScreen instanceof ChatScreen)) {
+			ci.cancel();
+		}
 	}
 
 	@Inject(
@@ -52,9 +63,20 @@ public abstract class InGameHudMixin {
 			at = @At("HEAD"),
 			cancellable = true
 	)
-	private void renderHotbar(float tickDelta, DrawContext context, CallbackInfo ci) {
-		if(!(Config.enabled && Common.ridingBoat)) return;
-		if(Config.showHotbar || Common.client.currentScreen instanceof ChatScreen) return;
-		ci.cancel();
+	private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+		if (Config.enabled && Common.ridingBoat && !(Config.showHotbar || Common.client.currentScreen instanceof ChatScreen)) {
+			ci.cancel();
+		}
+	}
+
+	@Inject(
+			method = "renderExperienceLevel",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	private void renderExperienceLevel(DrawContext ctx, RenderTickCounter tickCounter, CallbackInfo ci) {
+		if (Config.enabled && Common.ridingBoat && !(Config.showHotbar || Common.client.currentScreen instanceof ChatScreen)) {
+			ci.cancel();
+		}
 	}
 }

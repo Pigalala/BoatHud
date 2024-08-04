@@ -13,7 +13,7 @@ import java.util.List;
 
 public class HudRenderer {
 
-	private static final Identifier WIDGETS_TEXTURE = new Identifier("boathud","textures/widgets.png");
+	private static final Identifier WIDGETS_TEXTURE = Identifier.of("boathud","textures/widgets.png");
 	private static final HudRenderer INSTANCE = new HudRenderer();
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 

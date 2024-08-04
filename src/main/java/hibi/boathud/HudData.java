@@ -32,7 +32,7 @@ public class HudData {
 	private final double radToDegsConversion = 180 / pi;
 
 	public HudData(){
-		this.name = Common.client.player.getEntityName();
+		this.name = Common.client.player.getName().getLiteralString();
 		this.listEntry = Common.client.getNetworkHandler().getPlayerListEntry(Common.client.player.getUuid());
 	}
 
